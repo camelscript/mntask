@@ -1,0 +1,26 @@
+{
+  "name": "moneatask",
+  "version": "1.0.0",
+  "description": "Monea test task app",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.14.0",
+    "bluebird": "^3.4.6",
+    "express-validator": "^2.21.0",
+    "bcrypt-nodejs": "^0.0.3",
+    "mongodb": "^2.2.11",
+    "body-parser": "^1.15.2",
+    "mongoose-auto-increment": "^5.0.1",
+    "jsonwebtoken": "^7.1.9",
+    "mongoose": "^4.6.5",
+    "nodemon": "^1.11.0",
+    "underscore": "^1.8.3"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "deploy": "gcloud app deploy",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matiss Jurgelis",
+  "license": "ISC"
+}
