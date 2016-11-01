@@ -7,12 +7,14 @@ var mongoose          = require('mongoose');
 var bcrypt            = require('bcrypt-nodejs');
 var _                 = require('underscore');
 var app               = express();
-var port              = 3016;
+var port              = process.env.PORT || 80;
 var conf              = require('./config');
 var apiRoutes         = express.Router();
 
 mongoose.connect(conf.database);
 app.set('secret', conf.secret);
+app.set('host', process.env.HOST || '104.155.118.183');
+app.set('port', port);
 
 //Models
 var User = require('./app/models/user');
@@ -36,7 +38,9 @@ app.post('/login', function (req, res) {
 
   User.findOne({username: req.body.username}, 'id username created password salt',function (err, user){
     if (err) {
-      throw err;
+      res.status(400).json({msg: 'Sorry there is an error'});
+      console.log(err.message);
+      return;
     }
 
     if(user && bcrypt.compareSync(req.body.password, user.password)){
@@ -74,9 +78,11 @@ app.post('/users', function (req, res) {
     var maxUserCoutn = 20;
 
     if (err) {
-      throw err;
+      res.status(400).json({msg: 'Sorry there is an error'});
+      console.log(err.message);
+      return;
     }
- 
+
     if(count <= maxUserCoutn){
 
       salt = bcrypt.genSaltSync();
@@ -92,7 +98,9 @@ app.post('/users', function (req, res) {
 
       newUser.save(function (err) {
         if (err) {
-          throw err;
+          res.status(400).json({msg: 'Sorry there is an error'});
+          console.log(err.message);
+          return;
         }
 
         res.status(201).location('users/'+newUser.id).json({
@@ -145,7 +153,9 @@ app.use('/users', apiRoutes);
 app.get('/users', function (req, res) {
    User.find({}, function (err, users){
      if (err) {
-       throw err;
+       res.status(400).json({msg: 'Sorry there is an error'});
+       console.log(err.message);
+       return;
      }
      res.json(
        _.map(users, function(user){
@@ -167,7 +177,9 @@ app.get('/users/:id', function (req, res) {
 
   User.findById( req.params.id, function (err, user){
     if (err) {
-      throw err;
+      res.status(400).json({msg: 'Sorry there is an error'});
+      console.log(err.message);
+      return;
     }
     if(user){
       res.json({
@@ -187,12 +199,16 @@ app.delete('/users/:id', function (req, res) {
 
   User.findById( req.params.id, function (err, user){
     if (err) {
-      throw err;
+      res.status(400).json({msg: 'Sorry there is an error'});
+      console.log(err.message);
+      return;
     }
     if(user){
       user.remove(function(err){
         if (err) {
-          throw err;
+          res.status(400).json({msg: 'Sorry there is an error'});
+          console.log(err.message);
+          return;
         }
         res.status(204).json();
 
