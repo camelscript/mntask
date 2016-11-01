@@ -6,14 +6,16 @@ var jwt               = require('jsonwebtoken');
 var mongoose          = require('mongoose');
 var bcrypt            = require('bcrypt-nodejs');
 var _                 = require('underscore');
+var logReqToFile      = require('express-router-log-requests-to-file');
 var app               = express();
-var port              = process.env.PORT || 80;
+var port              = process.env.PORT || 3016;
+var host              = process.env.HOST || '127.0.0.1';
 var conf              = require('./config');
 var apiRoutes         = express.Router();
 
 mongoose.connect(conf.database);
 app.set('secret', conf.secret);
-app.set('host', process.env.HOST || '104.155.118.183');
+app.set('host', host);
 app.set('port', port);
 
 //Models
@@ -21,6 +23,7 @@ var User = require('./app/models/user');
 
 app.use(bodyParser.json());
 app.use(expressValidator());
+app.use('*', logReqToFile);
 
 app.get('/', function (req, res) {
   res.send('Wellcome to Monea Task1 app.');
@@ -127,7 +130,7 @@ var token = req.body.token || req.query.token || req.headers['authorization'];
 if (token) {
    jwt.verify(token, app.get('secret'), function(err, decoded) {
      if (err) {
-       return res.json({ success: false, message: 'Failed to authenticate token.' });
+       return res.json({ msg: 'Failed to authenticate token.' });
      } else {
        // if everything is good, save to request for use in other routes
        req.decoded = decoded;
@@ -224,4 +227,4 @@ function timestampToTime(date){
 }
 
 app.listen(port);
-console.log(`Server up at http://localhost:${port}`);
+console.log(`Server up at http://${host}:${port}`);
